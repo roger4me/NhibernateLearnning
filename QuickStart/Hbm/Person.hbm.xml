@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+    namespace="QuickStart.Model" assembly="QuickStart">
+  <class name="Person" table="Person">
+	<cache usage="read-write" />
+    <id name="Id">
+      <column name="Id"  not-null="true"/>
+      <generator class="native" />
+    </id>
+
+    <property name="UserName" >
+      <column name="Name" />
+    </property>
+    
+    <property name="Pwd" />
+    
+    <property name="BirthDay" />
+    
+    <property name="Gender" />
+
+    <sql-update>UPDATE person SET Name=UPPER(?),Pwd=?,BirthDay=?,Gender=? WHERE Id=?</sql-update>
+    <sql-delete>DELETE FROM PERSON WHERE Id= ?</sql-delete>
+  </class>
+   <sql-query name="persons">
+    <return alias="y" class="Person"/>
+        SELECT 
+		   x.Id as {y.Id},
+	       x.Name AS {y.UserName},
+           x.Pwd AS {y.Pwd},
+           x.BirthDay AS {y.BirthDay},
+		   x.Gender AS {y.Gender}
+    FROM PERSON x
+    WHERE x.Id = :Id
+</sql-query>
+	
+	<!--<sql-query name="selectAllEmployments_SP">
+    <return alias="emp" class="Employment">
+        <return-property name="employee" column="EMPLOYEE"/>
+        <return-property name="employer" column="EMPLOYER"/>
+        <return-property name="startDate" column="STARTDATE"/>
+        <return-property name="endDate" column="ENDDATE"/>
+        <return-property name="regionCode" column="REGIONCODE"/>
+        <return-property name="id" column="EID"/>
+        <return-property name="salary">
+            <return-column name="VALUE"/>
+            <return-column name="CURRENCY"/>
+        </return-property>
+    </return>
+    exec selectAllEmployments
+</sql-query>-->
+
+
+</hibernate-mapping>

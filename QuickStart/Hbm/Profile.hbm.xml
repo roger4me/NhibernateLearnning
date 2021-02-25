@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+    namespace="QuickStart.Model.OnetoOne" assembly="QuickStart">
+	<class name="Profile" table="Profile">
+		<id name="Id">
+			<generator class="native"/>
+		</id>
+		<property name="UserName"/>
+		<one-to-one name="Address" class="QuickStart.Model.OnetoOne.Address" cascade="all"/>
+	</class>
+</hibernate-mapping>

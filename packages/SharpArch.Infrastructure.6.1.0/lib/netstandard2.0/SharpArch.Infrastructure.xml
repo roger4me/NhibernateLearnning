@@ -1,0 +1,756 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SharpArch.Infrastructure</name>
+    </assembly>
+    <members>
+        <member name="T:SharpArch.Infrastructure.Abstractions.FileSystem">
+            <summary>
+                File system abstraction.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Abstractions.FileSystem.FileExists(System.String)">
+            <summary>
+                Determines whether specified file exists.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Abstractions.FileSystem.GetLastWriteTimeUtc(System.String)">
+            <summary>
+                Returns time when file or directory was last written to.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Abstractions.IFileSystem">
+            <summary>
+                File system abstraction.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Abstractions.IFileSystem.FileExists(System.String)">
+            <summary>
+                Determines whether specified file exists.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Abstractions.IFileSystem.GetLastWriteTimeUtc(System.String)">
+            <summary>
+                Returns time when file or directory was last written to.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Caching.DependencyList">
+            <summary>
+                Resolves and collects file dependencies.
+                Use <see cref="M:SharpArch.Infrastructure.Caching.DependencyList.GetLastModificationTime"/> to get latest modification timestamp of dependency list.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.#ctor(SharpArch.Infrastructure.Abstractions.IFileSystem,System.String)">
+            <summary>
+                Constructor.
+            </summary>
+            <param name="fileSystem">Custom file system.</param>
+            <param name="basePath">Base directory to use for file path resolution.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.AddAssemblyOf``1">
+            <summary>
+                Add assembly containing given type.
+            </summary>
+            <typeparam name="TType">Type</typeparam>
+            <returns>Self</returns>
+            <exception cref="T:System.InvalidOperationException">Type is dynamically generated (assembly does not exists on disk).</exception>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.AddAssembly(System.Reflection.Assembly)">
+            <summary>
+            Adds assembly to dependency list.
+            </summary>
+            <param name="assembly">Assembly</param>
+            <exception cref="T:System.InvalidOperationException">Assembly is dynamically generated.</exception>
+            <returns>Self</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.AddAssemblies(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            Adds multiple assemblies to dependency list.
+            </summary>
+            <param name="assemblies">List of assemblies.</param>
+            <exception cref="T:System.InvalidOperationException">Assembly list contains dynamically generated assembly.</exception>
+            <returns>Self</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.AddFile(System.String)">
+            <summary>
+                Adds file to dependency list.
+            </summary>
+            <param name="fileName">File path, if relative, base path will be used as root.</param>
+            <returns>Self</returns>
+            <exception cref="T:System.ArgumentException"><paramref name="fileName" /> is <c>null</c> or whitespace.</exception>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.AddFiles(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+                Adds files to dependency list. <see cref="M:SharpArch.Infrastructure.Caching.DependencyList.AddFile(System.String)" /> is performed for each dependency.
+            </summary>
+            <param name="files">List of files.</param>
+            <returns>Self</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.GetAssemblyCodeBasePath(System.Reflection.Assembly)">
+            <summary>
+                Returns directory of assembly code base.
+            </summary>
+            <param name="assembly">Assembly</param>
+            <returns>Directory path</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="assembly" /> is <see langword="null" /></exception>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.FindFile(System.String)">
+            <summary>
+                Tests if the file or assembly name exists either in the application's bin folder
+                or elsewhere.
+            </summary>
+            <param name="path">Path or file name to test for existence.</param>
+            <returns>Full path of the file.</returns>
+            <remarks>
+                If the path parameter does not end with ".dll" it is appended and
+                tested if the dll file exists.
+            </remarks>
+            <exception cref="T:System.IO.FileNotFoundException">Thrown if the file is not found.</exception>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.Build">
+            <summary>
+                Return list of dependencies.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Caching.DependencyList.GetLastModificationTime">
+            <summary>
+                Gets latest modification time of all dependencies.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.ILog">
+            <summary>
+                Simple interface that represent a logger.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.ILog.Log(SharpArch.Infrastructure.Logging.LogLevel,System.Func{System.String},System.Exception,System.Object[])">
+            <summary>
+                Log a message the specified log level.
+            </summary>
+            <param name="logLevel">The log level.</param>
+            <param name="messageFunc">The message function.</param>
+            <param name="exception">An optional exception.</param>
+            <param name="formatParameters">Optional format parameters for the message generated by the messagefunc. </param>
+            <returns>true if the message was logged. Otherwise false.</returns>
+            <remarks>
+                Note to implementers: the message func should not be called if the loglevel is not enabled
+                so as not to incur performance penalties.
+                To check IsEnabled call Log with only LogLevel and check the return value, no event will be written.
+            </remarks>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.ILogProvider">
+            <summary>
+            Represents a way to get a <see cref="T:SharpArch.Infrastructure.Logging.Logger"/>
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.ILogProvider.GetLogger(System.String)">
+            <summary>
+            Gets the specified named logger.
+            </summary>
+            <param name="name">Name of the logger.</param>
+            <returns>The logger reference.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.ILogProvider.OpenNestedContext(System.String)">
+            <summary>
+            Opens a nested diagnostics context. Not supported in EntLib logging.
+            </summary>
+            <param name="message">The message to add to the diagnostics context.</param>
+            <returns>A disposable that when disposed removes the message from the context.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.ILogProvider.OpenMappedContext(System.String,System.Object,System.Boolean)">
+            <summary>
+            Opens a mapped diagnostics context. Not supported in EntLib logging.
+            </summary>
+            <param name="key">A key.</param>
+            <param name="value">A value.</param>
+            <param name="destructure">Determines whether to call the destructor or not.</param>
+            <returns>A disposable that when disposed removes the map from the context.</returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogExtensions">
+            <summary>
+                Extension methods for the <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> interface.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsDebugEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsErrorEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsFatalEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsInfoEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsTraceEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.IsWarnEnabled(SharpArch.Infrastructure.Logging.ILog)">
+            <summary>
+                Check if the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level is enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to check with.</param>
+            <returns>True if the log level is enabled; false otherwise.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Debug(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Debug(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Debug(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Debug(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.DebugFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.DebugException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception)">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.DebugException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Debug"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Error(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Error(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Error(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Error(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.ErrorFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.ErrorException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Error"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Fatal(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Fatal(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Fatal(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Fatal(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.FatalFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.FatalException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Info(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Info(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Info(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Info(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.InfoFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.InfoException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Info"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Trace(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Trace(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Trace(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Trace(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.TraceFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.TraceException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Trace"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Warn(SharpArch.Infrastructure.Logging.ILog,System.Func{System.String})">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="messageFunc">The message function.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Warn(SharpArch.Infrastructure.Logging.ILog,System.String)">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Warn(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.Warn(SharpArch.Infrastructure.Logging.ILog,System.Exception,System.String,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.WarnFormat(SharpArch.Infrastructure.Logging.ILog,System.String,System.Object[])">
+            <summary>
+                Logs a message at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogExtensions.WarnException(SharpArch.Infrastructure.Logging.ILog,System.String,System.Exception,System.Object[])">
+            <summary>
+                Logs an exception at the <see cref="F:SharpArch.Infrastructure.Logging.LogLevel.Warn"/> log level, if enabled.
+            </summary>
+            <param name="logger">The <see cref="T:SharpArch.Infrastructure.Logging.ILog"/> to use.</param>
+            <param name="message">The message.</param>
+            <param name="exception">The exception.</param>
+            <param name="args">Optional format parameters for the message.</param>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogLevel">
+            <summary>
+                The log level.
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Trace">
+            <summary>
+            Trace
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Debug">
+            <summary>
+            Debug
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Info">
+            <summary>
+            Info
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Warn">
+            <summary>
+            Warn
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Error">
+            <summary>
+            Error
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogLevel.Fatal">
+            <summary>
+            Fatal
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.SetCurrentLogProvider(SharpArch.Infrastructure.Logging.ILogProvider)">
+            <summary>
+            Sets the current log provider.
+            </summary>
+            <param name="logProvider">The log provider.</param>
+        </member>
+        <member name="P:SharpArch.Infrastructure.Logging.LogProvider.IsDisabled">
+            <summary>
+            Gets or sets a value indicating whether this is logging is disabled.
+            </summary>
+            <value>
+            <c>true</c> if logging is disabled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:SharpArch.Infrastructure.Logging.LogProvider.OnCurrentLogProviderSet">
+            <summary>
+            Sets an action that is invoked when a consumer of your library has called SetCurrentLogProvider. It is 
+            important that hook into this if you are using child libraries (especially ilmerged ones) that are using
+            LibLog (or other logging abstraction) so you adapt and delegate to them.
+            <see cref="M:SharpArch.Infrastructure.Logging.LogProvider.SetCurrentLogProvider(SharpArch.Infrastructure.Logging.ILogProvider)"/> 
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.For``1">
+            <summary>
+            Gets a logger for the specified type.
+            </summary>
+            <typeparam name="T">The type whose name will be used for the logger.</typeparam>
+            <returns>An instance of <see cref="T:SharpArch.Infrastructure.Logging.ILog"/></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.GetCurrentClassLogger">
+            <summary>
+            Gets a logger for the current class.
+            </summary>
+            <returns>An instance of <see cref="T:SharpArch.Infrastructure.Logging.ILog"/></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.GetLogger(System.Type,System.String)">
+            <summary>
+            Gets a logger for the specified type.
+            </summary>
+            <param name="type">The type whose name will be used for the logger.</param>
+            <param name="fallbackTypeName">If the type is null then this name will be used as the log name instead</param>
+            <returns>An instance of <see cref="T:SharpArch.Infrastructure.Logging.ILog"/></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.GetLogger(System.String)">
+            <summary>
+            Gets a logger with the specified name.
+            </summary>
+            <param name="name">The name.</param>
+            <returns>An instance of <see cref="T:SharpArch.Infrastructure.Logging.ILog"/></returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.OpenNestedContext(System.String)">
+            <summary>
+            Opens a nested diagnostics context.
+            </summary>
+            <param name="message">A message.</param>
+            <returns>An <see cref="T:System.IDisposable"/> that closes context when disposed.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProvider.OpenMappedContext(System.String,System.Object,System.Boolean)">
+            <summary>
+            Opens a mapped diagnostics context.
+            </summary>
+            <param name="key">A key.</param>
+            <param name="value">A value.</param>
+            <param name="destructure">A optional paramater to indicate message should be destructured.</param>
+            <returns>An <see cref="T:System.IDisposable"/> that closes context when disposed.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LibLogException.#ctor(System.String)">
+            <summary>
+            Initializes a new LibLogException with the specified message.
+            </summary>
+            <param name="message">The message</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LibLogException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new LibLogException with the specified message and inner exception.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="inner">The inner exception.</param>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogMessageFormatter.SimulateStructuredLogging(System.Func{System.String},System.Object[])">
+            <summary>
+                Some logging frameworks support structured logging, such as serilog. This will allow you to add names to structured
+                data in a format string:
+                For example: Log("Log message to {user}", user). This only works with serilog, but as the user of LibLog, you don't
+                know if serilog is actually
+                used. So, this class simulates that. it will replace any text in {curly braces} with an index number.
+                "Log {message} to {user}" would turn into => "Log {0} to {1}". Then the format parameters are handled using regular
+                .net string.Format.
+            </summary>
+            <param name="messageBuilder">The message builder.</param>
+            <param name="formatParameters">The format parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase">
+            <summary>
+                Base class for specific log providers.
+            </summary>
+        </member>
+        <member name="F:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.ErrorInitializingProvider">
+            <summary>
+                Error message should initializing the log provider fail.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.#ctor">
+            <summary>
+                Initialize an instance of the <see cref="T:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase"/> class by initializing the references
+                to the nested and mapped diagnostics context-obtaining functions.
+            </summary>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.GetLogger(System.String)">
+            <summary>
+            Gets the specified named logger.
+            </summary>
+            <param name="name">Name of the logger.</param>
+            <returns>The logger reference.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.OpenNestedContext(System.String)">
+            <summary>
+            Opens a nested diagnostics context. Not supported in EntLib logging.
+            </summary>
+            <param name="message">The message to add to the diagnostics context.</param>
+            <returns>A disposable that when disposed removes the message from the context.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.OpenMappedContext(System.String,System.Object,System.Boolean)">
+            <summary>
+            Opens a mapped diagnostics context. Not supported in EntLib logging.
+            </summary>
+            <param name="key">A key.</param>
+            <param name="value">A value.</param>
+            <param name="destructure">Determines whether to call the destructor or not.</param>
+            <returns>A disposable that when disposed removes the map from the context.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.GetOpenNdcMethod">
+            <summary>
+                Returns the provider-specific method to open a nested diagnostics context.
+            </summary>
+            <returns>A provider-specific method to open a nested diagnostics context.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.GetOpenMdcMethod">
+            <summary>
+                Returns the provider-specific method to open a mapped diagnostics context.
+            </summary>
+            <returns>A provider-specific method to open a mapped diagnostics context.</returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.OpenNdc">
+            <summary>
+                Delegate defining the signature of the method opening a nested diagnostics context.
+            </summary>
+            <param name="message">The message to add to the diagnostics context.</param>
+            <returns>A disposable that when disposed removes the message from the context.</returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.OpenMdc">
+            <summary>
+                Delegate defining the signature of the method opening a mapped diagnostics context.
+            </summary>
+            <param name="key">A key.</param>
+            <param name="value">A value.</param>
+            <param name="destructure">Determines whether to call the destructor or not.</param>
+            <returns>A disposable that when disposed removes the map from the context.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.FindType(System.String,System.String)">
+            <summary>
+                Finds a type using a type name and assembly name.
+            </summary>
+            <param name="typeName">The name of the type.</param>
+            <param name="assemblyName">The name of the assembly.</param>
+            <returns>The requested type or null if it was not found.</returns>
+        </member>
+        <member name="M:SharpArch.Infrastructure.Logging.LogProviders.LogProviderBase.FindType(System.String,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+                Finds a type using a type name and a list of assembly names to search.
+            </summary>
+            <param name="typeName">The name of the type.</param>
+            <param name="assemblyNames">A list of assembly names to search.</param>
+            <returns>The request type or null if it was not found.</returns>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.LogProviders.LoupeLogProvider.WriteDelegate">
+            <summary>
+                The form of the Loupe Log.Write method we're using
+            </summary>
+        </member>
+        <member name="P:SharpArch.Infrastructure.Logging.LogProviders.LoupeLogProvider.ProviderIsAvailableOverride">
+            <summary>
+                Gets or sets a value indicating whether [provider is available override]. Used in tests.
+            </summary>
+            <value>
+                <c>true</c> if [provider is available override]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:SharpArch.Infrastructure.Logging.Logger">
+            <summary>
+            Logger delegate.
+            </summary>
+            <param name="logLevel">The log level</param>
+            <param name="messageFunc">The message function</param>
+            <param name="exception">The exception</param>
+            <param name="formatParameters">The format parameters</param>
+            <returns>A boolean.</returns>
+        </member>
+    </members>
+</doc>

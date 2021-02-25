@@ -1,0 +1,922 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SharpArch.NHibernate</name>
+    </assembly>
+    <members>
+        <member name="T:SharpArch.NHibernate.ConfigurationFileCache">
+            <summary>
+                Provides file cache helper methods.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.ConfigurationFileCache.RetrieveFromCache(System.String)">
+            <summary>
+                Loads NHibernate configuration from file.
+            </summary>
+            <param name="path">Full path to file containing serialized data.</param>
+            <returns><see cref="T:NHibernate.Cfg.Configuration"/> instance, or <c>null</c> in case of deserialization error.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the path parameter is null or empty.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.ConfigurationFileCache.StoreInCache(NHibernate.Cfg.Configuration,System.String)">
+            <summary>
+                Serializes NHibernate configuration to a file at the given path.
+            </summary>
+            <param name="configuration">NHibernate configuration instance.</param>
+            <param name="path">Full path of file to store the serialized data.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if configuration or path parameters are null.</exception>
+            <exception cref="T:System.ArgumentException">
+                <paramref name="path" /> is a zero-length string, contains only white space, or
+                contains one or more invalid characters.
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+                The specified path, file name, or both exceed the system-defined maximum length.
+                For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than
+                260 characters.
+            </exception>
+            <exception cref="T:System.NotSupportedException"><paramref name="path" /> is in an invalid format. </exception>
+            <exception cref="T:System.IO.DirectoryNotFoundException">The specified path is invalid, (for example, it is on an unmapped drive). </exception>
+            <exception cref="T:System.IO.IOException">An I/O error occurred while opening the file. </exception>
+            <exception cref="T:System.UnauthorizedAccessException">
+                <paramref name="path" /> specified a file that is read-only.
+                -or- This operation is not supported on the current platform.
+                -or- <paramref name="path" /> specified a directory.
+                -or- The caller does not have the required permission.
+                -or specified file is a hidden file.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">
+                An error has occurred during serialization, such as if an object in the <paramref name="configuration" /> parameter is not
+                marked as serializable.
+            </exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.ConfigurationFileCache.Save(System.IO.Stream,NHibernate.Cfg.Configuration)">
+            <summary>
+                Saves object to stream in BinaryFormat.
+            </summary>
+            <param name="stream">The stream.</param>
+            <param name="configuration">Configuration.</param>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">
+                An error has occurred during serialization, such as if an object in the <paramref name="configuration" /> parameter is not
+                marked as serializable.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.ConfigurationFileCache.Load(System.IO.Stream)">
+            <summary>
+                Load object from the stream.
+            </summary>
+            <param name="stream">The stream.</param>
+            <returns><see cref="T:NHibernate.Cfg.Configuration"/> instance.</returns>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">
+                The <paramref name="stream" /> supports seeking, but its length is 0.
+                -or-The target type is a <see cref="T:System.Decimal" />, but the value is out of range of the
+                <see cref="T:System.Decimal" /> type.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
+        </member>
+        <member name="T:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2">
+            <summary>
+                NHibernate-specific asynchronous repository extensions.
+            </summary>
+            <typeparam name="T">Entity type/</typeparam>
+            <typeparam name="TId">Entity identifier type.</typeparam>
+            <seealso cref="T:SharpArch.Domain.PersistenceSupport.IAsyncRepositoryWithTypedId`2" />
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.FindAllAsync(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+                Looks for zero or more instances using the properties provided.
+                The key of the collection should be the property name and the value should be
+                the value of the property to filter by.
+            </summary>
+            <param name="propertyValuePairs">Property name/value pairs to use as search criteria.</param>
+            <param name="maxResults">Maximum number of entities to return, if <see langword="null" /> return all data.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="propertyValuePairs" /> is <see langword="null" /></exception>
+            <exception cref="T:System.ArgumentException">No properties specified.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.FindAllAsync(`0,System.String[],System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+                Looks for zero or more instances using the example provided.
+            </summary>
+            <param name="exampleInstance">Sample entity instance.</param>
+            <param name="propertiesToExclude">Names of properties to exclude from search criteria.</param>
+            <param name="maxResults">Maximum number of entities to return, if <see langword="null" /> return all data.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.FindOneAsync(`0,System.Threading.CancellationToken,System.String[])">
+            <summary>
+                Looks for a single instance using the example provided.
+            </summary>
+            <exception cref="T:NHibernate.NonUniqueResultException" />
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.FindOneAsync(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Threading.CancellationToken)">
+            <summary>
+                Looks for a single instance using the property/values provided.
+            </summary>
+            <exception cref="T:NHibernate.NonUniqueResultException" />
+            <param name="propertyValuePairs">Property name/value pairs to use as search criteria.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.GetAsync(`1,SharpArch.Domain.Enums.LockMode,System.Threading.CancellationToken)">
+            <summary>
+                Returns null if a row is not found matching the provided Id.
+            </summary>
+            <param name="id">Entity identifier.</param>
+            <param name="lockMode">Row Lock mode.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.LoadAsync(`1,System.Threading.CancellationToken)">
+            <summary>
+                Return the persistent instance of the given entity class with the given identifier.
+            </summary>
+            <param name="id">Entity identifier.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.LoadAsync(`1,SharpArch.Domain.Enums.LockMode,System.Threading.CancellationToken)">
+            <summary>
+                Return the persistent instance of the given entity class with the given identifier, obtaining the specified lock
+                mode.
+            </summary>
+            <param name="id">Entity identifier.</param>
+            <param name="lockMode">Row Lock mode.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.MergeAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                Copy the state of the given object onto the persistent object with the same
+                identifier.
+                <para>
+                    If there is no persistent instance currently associated with
+                    the session, it will be loaded. Return the persistent instance.
+                </para>
+                <para>
+                    If the given instance is unsaved, save a copy of and return it as a newly persistent
+                    instance. The given instance does not become associated with the session.
+                </para>
+                <see cref="M:NHibernate.ISession.MergeAsync``1(``0,System.Threading.CancellationToken)" />
+            </summary>
+            <param name="entity">a detached instance with state to be copied </param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>An updated persistent instance.</returns>
+        </member>
+        <member name="M:SharpArch.NHibernate.Contracts.Repositories.IAsyncNHibernateRepositoryWithTypedId`2.UpdateAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                For entities that have assigned Id's, you should explicitly call Update to update an existing one.
+                Updating also allows you to commit changes to a detached object.  More info may be found at:
+                http://www.hibernate.org/hib_docs/nhibernate/html_single/#manipulatingdata-updating-detached
+            </summary>
+            <param name="entity">Entity instance.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>Entity instance.</returns>
+            <exception cref="T:System.ArgumentNullException"> <paramref name="entity" /> is <c>null</c>.</exception>
+        </member>
+        <member name="T:SharpArch.NHibernate.EntityDuplicateChecker">
+            <summary>
+                Checks if entity with the same domain signature already exists in the database.
+            </summary>
+            <seealso cref="T:SharpArch.Domain.PersistenceSupport.IEntityDuplicateChecker" />
+            <seealso cref="T:SharpArch.Domain.DomainModel.DomainSignatureAttribute" />
+            .
+        </member>
+        <member name="M:SharpArch.NHibernate.EntityDuplicateChecker.#ctor(NHibernate.ISession)">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.EntityDuplicateChecker" /> class.
+            </summary>
+            <param name="session">The session.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.EntityDuplicateChecker.DoesDuplicateExistWithTypedIdOf(SharpArch.Domain.DomainModel.IEntity)">
+            <summary>
+                Provides a behavior specific repository for checking if a duplicate exists of an existing entity.
+            </summary>
+            <param name="entity">The entity.</param>
+            <returns>
+                <c>true</c> if a duplicate exists, <c>false</c> otherwise.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">entity is null. </exception>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.AutomappingConfiguration">
+            <summary>
+                Applies custom mapping conventions to S#Arch entities.
+            </summary>
+            <remarks>
+                <list type="bullet">
+                    <listheader>
+                        <description>Following rules are applied:</description>
+                    </listheader>
+                    <item>
+                        <term>ID</term>
+                        <description>Property with name <c>Id</c> will be mapped to entity ID.</description>
+                    </item>
+                    <item>
+                        <term>Component</term>
+                        <description><see cref="T:SharpArch.Domain.DomainModel.ValueObject" /> descendants will be mapped as Components.</description>
+                    </item>
+                </list>
+            </remarks>
+            <seealso cref="T:FluentNHibernate.Automapping.DefaultAutomappingConfiguration" />
+            <seealso cref="T:SharpArch.Domain.DomainModel.IEntityWithTypedId`1" />
+            <seealso cref="T:SharpArch.Domain.DomainModel.ValueObject" />
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.AutomappingConfiguration.ShouldMap(System.Type)">
+            <summary>
+                Checks if given type is S#Arch entity.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.AutomappingConfiguration.IsComponent(System.Type)">
+            <summary>
+                Marks all <see cref="T:SharpArch.Domain.DomainModel.ValueObject" /> descendants as components.
+                See https://martinfowler.com/eaaCatalog/valueObject.html
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.AutomappingConfiguration.AbstractClassIsLayerSupertype(System.Type)">
+            <summary>
+                Marks all abstract descendants of <see cref="T:SharpArch.Domain.DomainModel.Entity" /> and <see cref="T:SharpArch.Domain.DomainModel.EntityWithTypedId`1" />
+                as Layer Supertype.
+                See http://martinfowler.com/eaaCatalog/layerSupertype.html
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.Conventions.CustomForeignKeyConvention">
+            <summary>
+                Foreign key convention.
+            </summary>
+            <seealso cref="T:FluentNHibernate.Conventions.ForeignKeyConvention" />
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.Conventions.CustomForeignKeyConvention.GetKeyName(FluentNHibernate.Member,System.Type)">
+            <summary>
+                Generates Foreign Key name.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.Conventions.HasManyConvention">
+            <summary>
+                One-to-many convention.
+            </summary>
+            <remarks>
+                <list type="bullet">
+                    <listheader>
+                        Following conventions are applied:
+                    </listheader>
+                    <item>
+                        <term>
+                            Cascades
+                        </term>
+                        <description>
+                            All, delete orphan.
+                        </description>
+                    </item>
+                    <item>
+                        <term>Inverse</term>
+                    </item>
+                    <item>
+                        <term>Foreign Key</term>
+                        <description>Entity name + Id. E.g. <c>ColorId</c></description>
+                    </item>
+                </list>
+            </remarks>
+            <seealso cref="T:FluentNHibernate.Conventions.IHasManyConvention" />
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.Conventions.HasManyConvention.Apply(FluentNHibernate.Conventions.Instances.IOneToManyCollectionInstance)">
+            <summary>
+                Applies convention.
+            </summary>
+            <param name="instance">The instance.</param>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.Conventions.PrimaryKeyConvention">
+            <summary>
+                Primary Key convention.
+            </summary>
+            <remarks>
+                Defines Primary Key name as EntityType+Id. E.c. <c>ColorId</c>
+            </remarks>
+            <seealso cref="T:FluentNHibernate.Conventions.IIdConvention" />
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.Conventions.PrimaryKeyConvention.Apply(FluentNHibernate.Conventions.Instances.IIdentityInstance)">
+            <summary>
+                Applies convention.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.Conventions.TableNameConvention">
+            <summary>
+                Table name convention.
+            </summary>
+            <remarks>Defines table name to match entity name. E.g.: <c>Color</c>.</remarks>
+            <seealso cref="T:FluentNHibernate.Conventions.IClassConvention" />
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.Conventions.TableNameConvention.Apply(FluentNHibernate.Conventions.Instances.IClassInstance)">
+            <summary>
+                Applies convention.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.FluentNHibernateExtensions">
+            <summary>
+                Fluent NHibernate mappings extensions.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.FluentNHibernateExtensions.AddFromNamespaceOf``1(FluentNHibernate.Cfg.FluentMappingsContainer)">
+            <summary>
+                Adds mappings from the assembly and namespace specified by <typeparamref name="T" />.
+            </summary>
+            <remarks>
+                This method is useful when multiple databases are mapped from the same assembly
+                as it allows to separate mappings by namespace.
+            </remarks>
+            <typeparam name="T">Type to use as assembly and namespace filter.</typeparam>
+            <param name="mappingsContainer">Mappings container</param>
+            <returns>Container <paramref name="mappingsContainer" /></returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="mappingsContainer" /> is <c>null</c>.</exception>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.GeneratorHelper">
+            <summary>
+                An optional helper class used to view the mapping file generated from a fluent nhibernate class mapper
+            </summary>
+            <remarks>
+                This is not necessary for Fluent Nhibernate to function properly.
+            </remarks>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.GeneratorHelper.GetMapGenerators">
+            <summary>
+                Scans assembly for <c>IMapGenerator</c> implementers.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.IAutoPersistenceModelGenerator">
+            <summary>
+                Fluent NHibernate auto-mapping model generator.
+            </summary>
+            <remarks>
+                Interface implementors will be automatically executed by TestDatabaseInitializer during test database
+                initialization.
+            </remarks>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.IAutoPersistenceModelGenerator.Generate">
+            <summary>
+                Generates persistence model.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.FluentNHibernate.IMapGenerator">
+            <summary>
+                Facilitates the visitor pattern for <see cref="T:SharpArch.NHibernate.FluentNHibernate.GeneratorHelper" /> to spit out the NHibernate
+                XML for the class.
+                To use, have your mapper implement this interface.  Then, simply include the following line within
+                Generate():  return CreateMapping(new MappingVisitor());
+                Now you can call Generate on your mapper class to view the generated XML.
+            </summary>
+            <remarks>
+                This is not necessary for Fluent Nhibernate to function properly.
+            </remarks>
+        </member>
+        <member name="P:SharpArch.NHibernate.FluentNHibernate.IMapGenerator.FileName">
+            <summary>
+                File name.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.FluentNHibernate.IMapGenerator.Generate">
+            <summary>
+                Generates XML mapping document.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.INHibernateConfigurationCache">
+            <summary>
+                Interface for providing caching capability for an <see cref="T:NHibernate.Cfg.Configuration" /> object.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.INHibernateConfigurationCache.TryLoad(System.DateTime)">
+            <summary>
+                Load the <see cref="T:NHibernate.Cfg.Configuration" /> object from a cache.
+            </summary>
+            <returns>
+                If an up to date cached object is available, a <see cref="T:NHibernate.Cfg.Configuration" /> object, otherwise null.
+            </returns>
+        </member>
+        <member name="M:SharpArch.NHibernate.INHibernateConfigurationCache.Save(NHibernate.Cfg.Configuration,System.DateTime)">
+            <summary>
+                Save the <see cref="T:NHibernate.Cfg.Configuration" /> object to a cache.
+            </summary>
+            <param name="configuration">Configuration object to save.</param>
+            <param name="timestampUtc">Configuration modification date.</param>
+        </member>
+        <member name="T:SharpArch.NHibernate.INHibernateTransactionManager">
+            <summary>
+                NHibernate transaction support.
+            </summary>
+        </member>
+        <member name="P:SharpArch.NHibernate.INHibernateTransactionManager.Session">
+            <summary>
+                Returns NHibernate session.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.INHibernateTransactionManager.FlushChangesAsync(System.Threading.CancellationToken)">
+            <summary>
+                Flushes everything that has been changed since the last commit.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.ISessionFactoryKeyProvider">
+            <summary>
+            Provides the key to retrieve session factory from IoC.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.ISessionFactoryKeyProvider.GetKey">
+            <summary>
+            Gets the session factory key.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SharpArch.NHibernate.ISessionFactoryKeyProvider.GetKeyFrom(System.Object)">
+            <summary>
+            Gets the session factory key.
+            </summary>
+            <param name="anObject">An optional object that may have an attribute used to determine the session factory key.</param>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.NHibernate.LinqRepository`1">
+            <summary>
+                LINQ extensions to NHibernate repository.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <seealso cref="T:System.Int32" />
+            <seealso cref="T:SharpArch.Domain.PersistenceSupport.ILinqRepository`1" />
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepository`1.#ctor(SharpArch.NHibernate.INHibernateTransactionManager)">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.LinqRepository`1" /> class.
+            </summary>
+            <param name="transactionManager">The transaction manager.</param>
+        </member>
+        <member name="T:SharpArch.NHibernate.LinqRepositoryWithTypedId`2">
+            <summary>
+                LINQ extensions to NHibernate repository.
+            </summary>
+            <typeparam name="T">Entity type.</typeparam>
+            <typeparam name="TId">The type of the identifier.</typeparam>
+            <seealso cref="T:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2" />
+            <seealso cref="T:SharpArch.Domain.PersistenceSupport.ILinqRepositoryWithTypedId`2" />
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepositoryWithTypedId`2.#ctor(SharpArch.NHibernate.INHibernateTransactionManager)">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.LinqRepositoryWithTypedId`2" /> class.
+            </summary>
+            <param name="transactionManager">The transaction manager.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepositoryWithTypedId`2.FindOneAsync(`1,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepositoryWithTypedId`2.FindOneAsync(SharpArch.Domain.Specifications.ILinqSpecification{`0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepositoryWithTypedId`2.FindAll">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.LinqRepositoryWithTypedId`2.FindAll(SharpArch.Domain.Specifications.ILinqSpecification{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateConfigurationCacheBase">
+            <summary>
+                File cache implementation of INHibernateConfigurationCache.  Saves and loads a
+                serialized version of <see cref="T:NHibernate.Cfg.Configuration" /> to a temporary file location.
+            </summary>
+            <remarks>
+                Serializing a <see cref="T:NHibernate.Cfg.Configuration" /> object requires that all components
+                that make up the Configuration object be Serializable.  This includes any custom NHibernate
+                user types implementing <see cref="T:NHibernate.UserTypes.IUserType" />.
+            </remarks>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.#ctor(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.TryLoad(System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.Save(NHibernate.Cfg.Configuration,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.GetCachedConfiguration">
+            <summary>
+                Reads serialized configuration from cache.
+            </summary>
+            <returns>Configuration as byte array or <c>null</c> if configuration is not available in cache.</returns>
+            <remarks>
+                Exception thrown by this method will be handled by <see cref="T:SharpArch.NHibernate.NHibernateConfigurationCacheBase" />.
+            </remarks>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.GetCachedTimestampUtc">
+            <summary>
+                Returns modification of the configuration (most recent file modification date).
+                This timestamp is used to compare local configuration files against cached configuration.
+            </summary>
+            <returns>Timestamp is UTC or <c>null</c> if cached configuration is not available.</returns>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.SaveConfiguration(System.Byte[],System.DateTime)">
+            <summary>
+                Stores serialized configuration in cache.
+            </summary>
+            <param name="data">Serialized configuration.</param>
+            <param name="timestampUtc">Timestamp of configuration.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationCacheBase.CreateSerializer">
+            <summary>
+                Creates binary serializer for NHibernate configuration.
+            </summary>
+            <returns>
+                <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />
+            </returns>
+            <remarks>
+                Override this method to provide custom serializers for NHibernate configuration classes.
+            </remarks>
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateConfigurationFileCache">
+            <summary>
+                File-based NHibernate configuration cache.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationFileCache.#ctor(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationFileCache.GetCachedConfiguration">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationFileCache.GetCachedTimestampUtc">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateConfigurationFileCache.SaveConfiguration(System.Byte[],System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateQuery">
+            <summary>
+            Base class for NHibernate query objects.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateQuery.#ctor(NHibernate.ISession)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpArch.NHibernate.NHibernateQuery"/> class.
+            </summary>
+            <param name="session">The session.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="session"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:SharpArch.NHibernate.NHibernateQuery.Session">
+            <summary>
+            NHibernate <see cref="T:NHibernate.ISession"/>.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateRepository`1">
+            <summary>
+                Since nearly all of the domain objects you create will have a type of int Id, this
+                most frequently used base NHibernateRepository leverages this assumption.  If you want
+                an entity with a type other than int, such as string, then use
+                <see cref="T:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2" />.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepository`1.#ctor(SharpArch.NHibernate.INHibernateTransactionManager)">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.NHibernateRepository`1" /> class.
+            </summary>
+            <param name="transactionManager">The transaction manager.</param>
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2">
+            <summary>
+                Provides a fully loaded DAO which may be created in a few ways including:
+                * Direct instantiation; e.g., new GenericDao&lt;Customer, string&gt;
+                * Spring configuration; e.g.,
+                <object id="CustomerDao"
+                    type="SharpArch.Data.NHibernateSupport.GenericDao&lt;CustomerAlias, string>, SharpArch.Data" autowire="byName" />
+            </summary>
+        </member>
+        <member name="P:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.Session">
+            <summary>
+                Gets NHibernate session.
+            </summary>
+        </member>
+        <member name="P:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.TransactionManager">
+            <summary>
+                Returns the database context, which provides a handle to application wide DB
+                activities such as committing any pending changes, beginning a transaction,
+                rolling back a transaction, etc.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.#ctor(SharpArch.NHibernate.INHibernateTransactionManager)">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2" /> class.
+            </summary>
+            <param name="transactionManager">The transaction manager.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.GetAsync(`1,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.GetAllAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.SaveAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.SaveOrUpdateAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.EvictAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.DeleteAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.DeleteAsync(`1,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.FindAllAsync(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.FindAllAsync(`0,System.String[],System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.FindOneAsync(`0,System.Threading.CancellationToken,System.String[])">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.FindOneAsync(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.GetAsync(`1,SharpArch.Domain.Enums.LockMode,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.LoadAsync(`1,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.LoadAsync(`1,SharpArch.Domain.Enums.LockMode,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.MergeAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.UpdateAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateRepositoryWithTypedId`2.ConvertFrom(SharpArch.Domain.Enums.LockMode)">
+            <summary>
+                Translates a domain layer lock mode into an NHibernate lock mode via reflection.  This is
+                provided to facilitate developing the domain layer without a direct dependency on the
+                NHibernate assembly.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateSessionFactoryBuilder">
+            <summary>
+                Creates NHibernate SessionFactory <see cref="T:NHibernate.ISessionFactory" />
+            </summary>
+            <remarks>
+                Transient object, session factory must be registered as singleton in DI Container.
+            </remarks>
+        </member>
+        <member name="F:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.DefaultNHibernateConfigFileName">
+            <summary>
+                Default configuration file name.
+            </summary>
+        </member>
+        <member name="F:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.DefaultConfigurationName">
+            <summary>
+                Default NHibernate session factory key.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.#ctor">
+            <summary>
+                Initializes a new instance of the <see cref="T:SharpArch.NHibernate.NHibernateSessionFactoryBuilder" /> class.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.BuildSessionFactory">
+            <summary>
+                Creates the session factory.
+            </summary>
+            <returns> NHibernate session factory <see cref="T:NHibernate.ISessionFactory" />.</returns>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.BuildConfiguration(System.String)">
+            <summary>
+                Builds NHibernate configuration.
+            </summary>
+            <param name="basePath">
+                Base directory to use for loading additional files.
+                If <c>null</c> base folder of the current assembly is used.
+            </param>
+            <remarks>
+                <para>
+                    Any changes made to configuration object after this point <b>will not be persisted</b> in configuration cache.
+                    This can be useful to make dynamic changes to configuration or in case changes cannot be serialized
+                    (e.g. event listeners are not marked with <see cref="T:System.SerializableAttribute" />.
+                </para>
+                <para>
+                    To make persistent changes use <seealso cref="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.ExposeConfiguration(System.Action{NHibernate.Cfg.Configuration})" />.
+                </para>
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">No dependencies were specified</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.ExposeConfiguration(System.Action{NHibernate.Cfg.Configuration})">
+            <summary>
+                Allows to alter configuration before creating NHibernate configuration.
+            </summary>
+            <remarks>
+                Changes to configuration will be persisted in configuration cache, if it is enabled.
+                In case changes must not be persisted in cache, they must be applied after <seealso cref="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.BuildConfiguration(System.String)" />.
+            </remarks>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseConfigurationCache(SharpArch.NHibernate.INHibernateConfigurationCache)">
+            <summary>
+                Allows to cache compiled NHibernate configuration.
+            </summary>
+            <param name="configurationCache">The configuration cache, see <see cref="T:SharpArch.NHibernate.INHibernateConfigurationCache" />. </param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">Please provide configuration cache instance.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.AddMappingAssemblies(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+                Allows to specify additional assemblies containing FluentNHibernate mappings.
+            </summary>
+            <param name="mappingAssemblies">The mapping assemblies.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">Mapping assemblies are not specified.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.WithFileDependency(System.String)">
+            <summary>
+                Add generic file dependency.
+                Used with session cache to add dependency which is not used to configure session
+                (e.g. application configuration, shared library, etc...)
+            </summary>
+            <param name="fileName">File name</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException">File name cannot be empty</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseAutoPersistenceModel(FluentNHibernate.Automapping.AutoPersistenceModel)">
+            <summary>
+                Allows to specify FluentNhibernate auto-persistence model to use..
+            </summary>
+            <param name="autoPersistenceModel">The automatic persistence model.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseProperties(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+                Allows to specify additional NHibernate properties, see
+                http://nhibernate.info/doc/nhibernate-reference/session-configuration.html.
+            </summary>
+            <param name="properties">The properties.</param>
+            <returns>Builder instance.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="properties" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseDataAnnotationValidators(System.Boolean)">
+            <summary>
+                Allows to use Data Annotations and <see cref="T:System.ComponentModel.DataAnnotations.Validator" /> to validate entities before insert/update.
+            </summary>
+            <remarks>
+                See https://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations%28v=vs.110%29.aspx for details
+                about Data Annotations.
+            </remarks>
+            <seealso cref="T:SharpArch.NHibernate.NHibernateValidator.DataAnnotationsEventListener" />.
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseConfigFile(System.String)">
+            <summary>
+                Allows to specify nhibernate configuration file.
+            </summary>
+            <remarks>
+                See http://nhibernate.info/doc/nhibernate-reference/session-configuration.html#configuration-xmlconfig for more
+                details
+            </remarks>
+            <exception cref="T:System.ArgumentException">NHibernate config was not specified.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UseCache(System.Action{FluentNHibernate.Cfg.Db.CacheSettingsBuilder})">
+            <summary>
+            Allows to configure second-level cache.
+            </summary>
+            <param name="cacheSettingsBuilder">Cache settings configuration. Use <c>null</c> to clear previous setting.</param>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.UsePersistenceConfigurer(FluentNHibernate.Cfg.Db.IPersistenceConfigurer)">
+            <summary>
+                Allows to specify custom configuration using <see cref="T:FluentNHibernate.Cfg.Db.IPersistenceConfigurer" />.
+            </summary>
+            <param name="persistenceConfigurer">The persistence configurer.</param>
+            <example>
+                <code>
+            var persistenceConfigurer =
+              SQLiteConfiguration.Standard.ConnectionString(c => c.Is("Data Source=:memory:;Version=3;New=True;"));
+            var configuration = new NHibernateSessionFactoryBuilder()
+              .UsePersistenceConfigurer(persistenceConfigurer);
+            </code>
+            </example>
+            <exception cref="T:System.ArgumentNullException"><paramref name="persistenceConfigurer" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.NHibernateSessionFactoryBuilder.LoadExternalConfiguration">
+            <summary>
+                Loads configuration from properties dictionary and from external file if available.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SharpArch.NHibernate.NHibernateValidator.DataAnnotationsEventListener">
+            <summary>
+            Performs entity validation using <see cref="T:System.ComponentModel.DataAnnotations.Validator"/> class.
+            </summary>
+        </member>
+        <member name="T:SharpArch.NHibernate.NullNHibernateConfigurationCache">
+            <summary>
+                Null Object for configuration cache.
+            </summary>
+        </member>
+        <member name="F:SharpArch.NHibernate.NullNHibernateConfigurationCache.Null">
+            <summary>
+                Instance.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.NullNHibernateConfigurationCache.TryLoad(System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.NullNHibernateConfigurationCache.Save(NHibernate.Cfg.Configuration,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="T:SharpArch.NHibernate.SessionExtensions">
+            <summary>
+                NHibernate <see cref="T:NHibernate.ISession" /> extension methods.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.SessionExtensions.FlushAndEvict(NHibernate.ISession,System.Object)">
+            <summary>
+                Flushes session and evict entity from the session.
+            </summary>
+            <param name="session">The session.</param>
+            <param name="entity">The entity.</param>
+            <exception cref="T:System.ArgumentNullException">
+                <paramref name="session" /> or <paramref name="entity" /> is
+                <c>null</c>.
+            </exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.SessionExtensions.FlushAndEvictAsync(NHibernate.ISession,System.Object,System.Threading.CancellationToken)">
+            <summary>
+                Flushes session and evict entity from the session.
+            </summary>
+            <param name="session">The session.</param>
+            <param name="entity">The entity.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <exception cref="T:System.ArgumentNullException">
+                <paramref name="session" /> or <paramref name="entity" /> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.SessionExtensions.IncrementVersionAsync(NHibernate.ISession,System.Object,System.Threading.CancellationToken)">
+            <summary>
+                Force version increment for versioned entity.
+            </summary>
+            <param name="session">
+                <see cref="T:NHibernate.ISession" />
+            </param>
+            <param name="entity">Entity to increment version for.</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="session" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.SessionExtensions.IncrementVersion(NHibernate.ISession,System.Object)">
+            <summary>
+                Force version increment for versioned entity.
+            </summary>
+            <param name="session">
+                <see cref="T:NHibernate.ISession" />
+            </param>
+            <param name="entity">Entity to increment version for.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="session" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:SharpArch.NHibernate.SessionExtensions.IsModified(NHibernate.ISession,System.Object)">
+            <summary>
+                Checks whether entity is modified.
+            </summary>
+            <param name="session">
+                <see cref="T:NHibernate.ISession" />
+            </param>
+            <param name="entity"></param>
+            <returns><c>true</c> id entity was modified.</returns>
+            <exception cref="T:System.ArgumentNullException">
+                <paramref name="entity" /> or <paramref name="session" /> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="T:SharpArch.NHibernate.TransactionManager">
+            <summary>
+                Transaction manager for NHibernate.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.#ctor(NHibernate.ISession)">
+            <summary>
+                Creates instance of transaction manager.
+            </summary>
+            <param name="session"></param>
+        </member>
+        <member name="P:SharpArch.NHibernate.TransactionManager.Session">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.GetTransaction">
+            <summary>
+                Returns current transaction or <c>null</c> if no transaction was open.
+            </summary>
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.CommitTransactionAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.RollbackTransactionAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.BeginTransaction(System.Data.IsolationLevel)">
+            <inheritdoc />
+        </member>
+        <member name="M:SharpArch.NHibernate.TransactionManager.FlushChangesAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="P:SharpArch.NHibernate.TransactionManager.IsActive">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
